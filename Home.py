@@ -1,8 +1,172 @@
 import streamlit as st
-import os
+import json
+import textwrap
 from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+# -----------------------------
+# Streamlit Page Configuration
+# -----------------------------
+st.set_page_config(page_title="Exam-Style Question Generator", page_icon="📘")
+
+# Hide sidebar for a clean standalone page
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"] { display: none; }
+        [data-testid="stSidebarNav"] { display: none; }
+        .block-container {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+
+
+# -----------------------------
+# Exam Question Generator
+# -----------------------------
+def generate_exam_question(topic: str, marks: int):
+    system_prompt = (
+        "You generate Leaving Cert Higher Level Maths exam-style questions. "
+        "You must output STRICT JSON only. No markdown, no commentary."
+    )
+
+    user_prompt = textwrap.dedent(f"""
+        Generate ONE exam-style question for Leaving Cert Higher Level Maths.
+
+        Requirements:
+        - Topic: {topic}
+        - Total marks: {marks}
+        - Structure: multi-part (a), (b), (c)
+        - Difficulty: Higher Level
+        - Style: similar to real LC HL exam questions but not copied
+        - All maths must be valid LaTeX (no $$ or \
+
+\[ \\]
+
+, just the LaTeX)
+        - Provide full worked solutions for each part
+        - Distribute marks sensibly across parts
+
+        Return ONLY valid JSON in this structure:
+
+        {{
+          "total_marks": <int>,
+          "topic": "{topic}",
+          "difficulty": "Higher Level",
+          "parts": [
+            {{
+              "label": "a",
+              "marks": <int>,
+              "question": "<LaTeX>",
+              "solution": "<LaTeX>"
+            }},
+            {{
+              "label": "b",
+              "marks": <int>,
+              "question": "<LaTeX>",
+              "solution": "<LaTeX>"
+            }},
+            {{
+              "label": "c",
+              "marks": <int>,
+              "question": "<LaTeX>",
+              "solution": "<LaTeX>"
+            }}
+          ]
+        }}
+
+        JSON only. No backticks.
+    """)
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0.4,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+    )
+
+    raw = response.choices[0].message.content.strip()
+
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON returned:\n{raw}") from e
+
+
+# -----------------------------
+# Streamlit UI
+# -----------------------------
+st.title("Exam-Style Question Generator")
+st.write("Generate LC Higher Level exam-style questions with full worked solutions.")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    topic = st.selectbox(
+        "Choose a topic:",
+        [
+            "Algebra",
+            "Calculus",
+            "Trigonometry",
+            "Complex Numbers",
+            "Probability",
+            "Functions",
+            "Geometry",
+            "Sequences & Series",
+            "Financial Maths",
+        ],
+    )
+
+with col2:
+    marks = st.selectbox("Total marks:", [25, 50, 75])
+
+if "exam_question" not in st.session_state:
+    st.session_state.exam_question = None
+
+
+def render_question(data):
+    st.subheader("Question")
+    for part in data["parts"]:
+        st.markdown(f"**({part['label']}) [{part['marks']} marks]**")
+        st.latex(part["question"])
+
+
+def render_solution(data):
+    st.subheader("Solution")
+    for part in data["parts"]:
+        st.markdown(f"**Solution ({part['label']})**")
+        st.latex(part["solution"])
+
+
+colA, colB = st.columns([2, 1])
+
+with colA:
+    if st.button("Generate Question", use_container_width=True):
+        with st.spinner("Generating exam-style question..."):
+            st.session_state.exam_question = generate_exam_question(topic, marks)
+
+with colB:
+    if st.session_state.exam_question is not None:
+        if st.button("More Like This", use_container_width=True):
+            with st.spinner("Generating similar question..."):
+                st.session_state.exam_question = generate_exam_question(topic, marks)
+
+
+if st.session_state.exam_question:
+    st.divider()
+    render_question(st.session_state.exam_question)
+    st.divider()
+    render_solution(st.session_state.exam_question)
+
+
+
+
 
 # -----------------------------
 # TOPICS + SUBTOPICS
