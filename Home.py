@@ -31,11 +31,10 @@ st.markdown("""
 # -----------------------------
 def generate_exam_question(topic: str, marks: int):
    system_prompt = (
-        "You are a Leaving Cert Higher Level Maths examiner.
-        Generate questions that follow the style, structure, tone, and difficulty
-        of real LC Higher Level exam papers.
+        "You are a Leaving Cert Higher Level Maths examiner."
+        "Generate questions that follow the style, structure, tone, and difficulty of real LC Higher Level exam papers."
 
-        Requirements:
+        "Requirements:
         - Create NEW, original questions. Never quote or reproduce past papers.
         - Use multi-part structure (a), (b), (c) where appropriate.
         - Use clear mathematical reasoning and LC-style progression.
