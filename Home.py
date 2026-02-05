@@ -31,7 +31,7 @@ st.markdown("""
 # -----------------------------
 def generate_exam_question(topic: str, marks: int):
    system_prompt = (
-        You are a Leaving Cert Higher Level Maths examiner.
+        "You are a Leaving Cert Higher Level Maths examiner.
         Generate questions that follow the style, structure, tone, and difficulty
         of real LC Higher Level exam papers.
 
@@ -48,7 +48,7 @@ def generate_exam_question(topic: str, marks: int):
           \frac{1}{6}
           \sqrt{x}
         - Return exactly 3 exam-style questions, each possibly multi-part.
-        - Do NOT include solutions.
+        - Do NOT include solutions."
 
     )
 
