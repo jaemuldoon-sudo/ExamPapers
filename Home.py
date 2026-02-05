@@ -97,7 +97,7 @@ st.markdown("""
 st.markdown("""
 <div class="hero">
     <h1>Leaving Cert Maths Tutor</h1>
-    <p>Your personalised practice hub for Higher Level Maths</p>
+    <p>Exam Papers</p>
 </div>
 """, unsafe_allow_html=True)
 
