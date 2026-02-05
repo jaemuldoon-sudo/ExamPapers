@@ -96,7 +96,7 @@ st.markdown("""
 # ------------------ HERO SECTION ------------------
 st.markdown("""
 <div class="hero">
-    <h1>Leaving Cert Maths Tutor</h1>
+    <h1>Leaving Cert Maths Tut</h1>
     <p>Exam Papers</p>
 </div>
 """, unsafe_allow_html=True)
