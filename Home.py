@@ -1,130 +1,339 @@
 import streamlit as st
+import os
+from openai import OpenAI
 
-st.set_page_config(
-    page_title="Leaving Cert Maths Tutor",
-    page_icon="📘",
-    layout="wide"
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# -----------------------------
+# TOPICS + SUBTOPICS
+# -----------------------------
+TOPICS = ["Probability", "Trigonometry", "Algebra", "Circle", "Calculus"]
+
+SUBTOPICS = {
+    "Probability": [
+        "Combined events",
+        "Conditional probability",
+        "Expected value",
+        "Permutations and combinations",
+        "Binomial distribution",
+        "Bernoulli Trials",
+        "Normal Distribution"
+    ],
+    "Trigonometry": [
+        "Trig identities",
+        "Trig equations",
+        "Graphs",
+        "Radians",
+        "Sine rule / Cosine rule",
+        "Unit Circle"
+    ],
+    "Algebra": [
+        "Quadratics",
+        "Functions",
+        "Logs",
+        "Sequences & series",
+        "Inequalities"
+    ],
+    "Circle": [
+        "Center (0,0) and radius r",
+        "Center (h,k) and radius r",
+        "Equations of the form x^2 +y^2 + 2gx + 2gy + c = 0",
+        "Points outside, inside or on the Circle",
+        "Intersection of a line and circle"
+    ],
+    "Calculus": [
+        "Differentiation",
+        "Integration",
+        "Rates of change",
+        "Area under curves",
+        "Product/Quotient/Chain rule"
+    ]
+}
+
+# -----------------------------
+# OPENAI CALL
+# -----------------------------
+def call_openai(system_prompt, user_prompt):
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+    )
+    return response.choices[0].message.content
+
+
+# -----------------------------
+# WORKSHEET GENERATORS
+# -----------------------------
+def generate_worksheet(topic, subtopics, difficulty):
+    chosen = ", ".join(subtopics)
+
+    system_prompt = (
+        "You are a Leaving Cert Higher Level Maths tutor. "
+        "Generate exactly 10 unique exam‑style questions. "
+        f"Difficulty level: {difficulty}. "
+        f"Focus ONLY on these subtopics: {chosen}. "
+        "Use LaTeX formatting for ALL mathematical expressions. "
+        "Use ONLY inline LaTeX with single dollar signs: $ ... $."
+        "Wrap EVERY LaTeX expression in $$ ... $$. "
+        "Never use $$ ... $$ under any circumstances."
+        "Never output plain text maths such as x^2, 1/6, sqrt(x), etc."
+        "Every mathematical expression must be inside $ ... $."
+        "Do NOT output plain text maths like x^2 or 1/6. "
+        "Return the questions as a numbered list, one per line, no solutions."
+
+    )
+
+    user_prompt = (
+        f"Create a {difficulty} worksheet on {topic}. "
+        f"Subtopics: {chosen}. "
+        "Ensure ALL maths is in LaTeX wrapped in $$ ... $$."
+    )
+
+    text = call_openai(system_prompt, user_prompt)
+    return [q.strip() for q in text.split("\n") if q.strip()]
+
+
+def generate_balanced_worksheet(topic, subtopics):
+    chosen = ", ".join(subtopics)
+
+    system_prompt = (
+        "You are a Leaving Cert Higher Level Maths tutor. "
+        "Generate ONE exam‑style question for EACH selected subtopic. "
+        "Use LaTeX formatting wrapped in $$ ... $$. "
+        "Use ONLY inline LaTeX with single dollar signs: $ ... $."
+        "Wrap EVERY LaTeX expression in $$ ... $$. "
+        "Never use $$ ... $$ under any circumstances."
+        "Never output plain text maths such as x^2, 1/6, sqrt(x), etc."
+        "Every mathematical expression must be inside $ ... $."
+        "Do NOT output plain text maths like x^2 or 1/6. "
+        "Return a numbered list, no solutions."
+    )
+
+    user_prompt = f"Topic: {topic}\nSubtopics: {chosen}"
+
+    text = call_openai(system_prompt, user_prompt)
+    return [q.strip() for q in text.split("\n") if q.strip()]
+
+
+def generate_answer(question, topic, difficulty):
+    system_prompt = (
+        "You are a Leaving Cert Higher Level Maths tutor. "
+        "Provide a full step‑by‑step worked solution. "
+        "Use LaTeX formatting wrapped in $$ ... $$. "
+        "Use ONLY inline LaTeX with single dollar signs: $ ... $."
+        "Wrap EVERY LaTeX expression in $$ ... $$. "
+        "Never use $$ ... $$ under any circumstances."
+        "Never output plain text maths such as x^2, 1/6, sqrt(x), etc."
+        "Every mathematical expression must be inside $ ... $."
+        "Do NOT output plain text maths like x^2 or 1/6. "
+        f"Match the difficulty: {difficulty}."
+    )
+
+    user_prompt = f"Topic: {topic}\nQuestion: {question}"
+
+    return call_openai(system_prompt, user_prompt)
+
+
+def generate_similar_question(question, topic, difficulty):
+    system_prompt = (
+        "You are a Leaving Cert Higher Level Maths tutor. "
+        "Generate ONE new question similar in style and difficulty "
+        "but not identical. "
+        "Use LaTeX formatting wrapped in $$ ... $$. "
+        "Use ONLY inline LaTeX with single dollar signs: $ ... $."
+        "Wrap EVERY LaTeX expression in $$ ... $$. "
+        "Never use $$ ... $$ under any circumstances."
+        "Never output plain text maths such as x^2, 1/6, sqrt(x), etc."
+        "Every mathematical expression must be inside $ ... $."
+        "Do NOT output plain text maths like x^2 or 1/6. "
+        "No solution."
+    )
+
+    user_prompt = f"Topic: {topic}\nOriginal question: {question}"
+
+    return call_openai(system_prompt, user_prompt)
+
+
+def generate_exam_style_worksheet(topic, subtopics):
+    chosen = ", ".join(subtopics)
+
+    system_prompt = (
+        "You are a Leaving Cert Higher Level Maths examiner. "
+        "Generate questions that follow the style, structure, tone, and difficulty "
+        "of real LC Higher Level exam papers. "
+        "Base your style on typical LC question formats, multi‑part structure, "
+        "mark‑style progression, and the level of mathematical rigor expected. "
+        "You may include multi‑part questions (a), (b), (c). "
+        "You may include diagrams described in words. "
+        "Do NOT quote or reproduce any past exam paper. "
+        "Only create new, original questions inspired by the general LC style. "
+        "Use LaTeX formatting for ALL mathematical expressions, wrapped in $$ ... $$. "
+        "Use ONLY inline LaTeX with single dollar signs: $ ... $."
+        "Wrap EVERY LaTeX expression in $$ ... $$. "
+        "Never use $$ ... $$ under any circumstances."
+        "Never output plain text maths such as x^2, 1/6, sqrt(x), etc."
+        "Every mathematical expression must be inside $ ... $."
+        "Do NOT output plain text maths like x^2 or 1/6. "
+        "Return exactly 3 exam‑style questions, each possibly multi‑part, no solutions."
+    )
+
+    user_prompt = (
+        f"Topic: {topic}\n"
+        f"Subtopics: {chosen}\n"
+        "Generate 3 exam‑style questions."
+    )
+
+    text = call_openai(system_prompt, user_prompt)
+    return [q.strip() for q in text.split("\n") if q.strip()]
+
+
+
+
+# -----------------------------
+# PAGE CONFIG
+# -----------------------------
+st.set_page_config(page_title="LC Maths Tutor", layout="centered")
+
+# -----------------------------
+# BRAND HEADER
+# -----------------------------
+st.markdown(
+    """
+    <div style="text-align:center; padding: 10px 0 20px 0;">
+        <h1 style="margin-bottom:0;">📘 LC Maths Tutor</h1>
+        <p style="color:#4a4a4a; font-size:18px; margin-top:5px;">
+            Adaptive, exam‑style practice — built for students.
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
-# ------------------ CUSTOM CSS ------------------
+# -----------------------------
+# TOPIC + SUBTOPICS
+# -----------------------------
+st.markdown("### Choose Your Topic")
+topic = st.selectbox("", TOPICS)
 
-# Hide the sidebar completely
-st.markdown("""
-    <style>
-        [data-testid="stSidebar"] {
-            display: none;
-        }
-        [data-testid="stSidebarNav"] {
-            display: none;
-        }
-        /* Expand main content to full width */
-        .block-container {
-            padding-left: 2rem;
-            padding-right: 2rem;
-        }
-    </style>
-""", unsafe_allow_html=True)
+st.markdown("### Choose Subtopics")
+subtopics = st.multiselect(
+    "",
+    SUBTOPICS.get(topic, []),
+    placeholder="Pick 1–5 subtopics"
+)
+
+st.markdown("---")
+
+# -----------------------------
+# SESSION STATE
+# -----------------------------
+if "questions" not in st.session_state:
+    st.session_state.questions = []
+if "difficulty" not in st.session_state:
+    st.session_state.difficulty = []
+if "similar_questions" not in st.session_state:
+    st.session_state.similar_questions = {}
 
 
-st.markdown("""
-<style>
+# -----------------------------
+# WORKSHEET BUTTONS (MOBILE‑FIRST)
+# -----------------------------
+st.markdown("### Generate Worksheet")
 
-/* Remove Streamlit default padding */
-.main > div {
-    padding-top: 0rem;
-}
+# Row 1 — Difficulty
+c1, c2, c3 = st.columns(3)
 
-/* Hero section */
-.hero {
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    padding: 4rem 2rem;
-    border-radius: 12px;
-    color: white;
-    text-align: center;
-    margin-bottom: 3rem;
-}
+with c1:
+    if st.button("Easy", use_container_width=True):
+        st.session_state.difficulty = "Easy"
+        st.session_state.questions = generate_worksheet(topic, subtopics, "Easy")
 
-.hero h1 {
-    font-size: 3rem;
-    font-weight: 700;
-}
+with c2:
+    if st.button("Medium", use_container_width=True):
+        st.session_state.difficulty = "Medium"
+        st.session_state.questions = generate_worksheet(topic, subtopics, "Medium")
 
-.hero p {
-    font-size: 1.3rem;
-    opacity: 0.9;
-}
+with c3:
+    if st.button("Hard", use_container_width=True):
+        st.session_state.difficulty = "Hard"
+        st.session_state.questions = generate_worksheet(topic, subtopics, "Hard")
 
-/* Card container */
-.card {
-    background: #ffffff;
-    padding: 1.8rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: all 0.2s ease;
-    border: 1px solid #e6e6e6;
-}
+# Row 2 — Random / Balanced / Exam Style
+c4, c5, c6 = st.columns(3)
 
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
+with c4:
+    if st.button("Random", use_container_width=True):
+        import random
+        diff = random.choice(["Easy", "Medium", "Hard"])
+        st.session_state.difficulty = diff
+        st.session_state.questions = generate_worksheet(topic, subtopics, diff)
 
-/* Card title */
-.card h3 {
-    margin-top: 0;
-    font-size: 1.4rem;
-    font-weight: 600;
-}
+with c5:
+    if st.button("Balanced", use_container_width=True):
+        # st.session_state.difficulty = "Balanced"
+        st.session_state.questions = generate_balanced_worksheet(topic, subtopics)
 
-/* Card text */
-.card p {
-    font-size: 1rem;
-    color: #555;
-}
+with c6:
+    if st.button("Exam Style", use_container_width=True):
+        st.session_state.difficulty = "Exam Style"
+        st.session_state.questions = generate_exam_style_worksheet(topic, subtopics)
 
-/* Button styling */
-.stButton>button {
-    width: 100%;
-    border-radius: 8px;
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-}
 
-</style>
-""", unsafe_allow_html=True)
+st.markdown("---")
 
-# ------------------ HERO SECTION ------------------
-st.markdown("""
-<div class="hero">
-    <h1>Leaving Cert Maths Tuteeeee</h1>
-    <p>Exam Papers</p>
-</div>
-""", unsafe_allow_html=True)
+# -----------------------------
+# DISPLAY WORKSHEET
+# -----------------------------
+questions = st.session_state.questions
+difficulty = st.session_state.difficulty
 
-# ------------------ FEATURE CARDS ------------------
-col1, col2, col3 = st.columns(3)
+if questions:
+    st.markdown(
+        f"""
+        <h2 style="margin-bottom:0;">{topic} Worksheet</h2>
+        <p style="color:#6a6a6a; margin-top:0;">
+            Mode: <strong>{difficulty}</strong>
+        </p>
+        """,
+        unsafe_allow_html=True
+    )
 
-with col1:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("### 📝 Worksheets")
-    st.write("Generate random, balanced, or topic‑focused worksheets.")
-    st.page_link("pages/Worksheets.py", label="Go to Worksheets")
-    st.markdown('</div>', unsafe_allow_html=True)
+    if subtopics:
+        st.caption("Subtopics: " + ", ".join(subtopics))
 
-with col2:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("### 📚 Exam Papers")
-    st.write("Create full Paper 1 or Paper 2 with marking schemes.")
-    st.page_link("pages/Exam_Papers.py", label="Go to Exam Papers")
-    st.markdown('</div>', unsafe_allow_html=True)
+    for i, q in enumerate(questions):
+        st.markdown(
+            f"""
+            <div style="
+                background:#f7f9fc;
+                padding:18px;
+                border-radius:10px;
+                margin-bottom:15px;
+                border:1px solid #e3e6eb;
+            ">
+                <h4 style="margin-top:0;">Question {i+1}</h4>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-with col3:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("### 📊 Progress (coming soon)")
-    st.write("Track your accuracy, weak topics, and improvement over time.")
-    st.button("Progress Dashboard", disabled=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(q)
 
-# ------------------ FOOTER ------------------
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.caption("Built to help you master Leaving Cert Higher Level Maths.")
+        b1, b2 = st.columns(2)
+
+        with b1:
+            if st.button(f"Show Answer", key=f"ans_{i}", use_container_width=True):
+                ans = generate_answer(q, topic, difficulty)
+                st.markdown(ans)
+
+        with b2:
+            if st.button(f"More Like This", key=f"more_{i}", use_container_width=True):
+                sim = generate_similar_question(q, topic, difficulty)
+                st.markdown("**Another question like this:**")
+                st.markdown(sim)
+
+else:
+    st.info("Choose a topic, pick subtopics, and select a worksheet mode to begin.")
