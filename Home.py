@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import textwrap
 from openai import OpenAI
+import os
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
