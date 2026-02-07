@@ -106,9 +106,9 @@ def generate_exam_question(topic: str, marks: int):
 
    raw = response.choices[0].message.content.strip()
 
-    try:
+   try:
         return json.loads(raw)
-    except json.JSONDecodeError as e:
+   except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON returned:\n{raw}") from e
 
 
