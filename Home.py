@@ -36,6 +36,7 @@ def convert_parentheses_latex(text):
 
 
 
+
 # -----------------------------
 # Exam Question Generator
 # -----------------------------
@@ -420,8 +421,7 @@ if questions:
             unsafe_allow_html=True
         )
 
-        st.markdown(convert_parentheses_latex(q))
-
+        st.latex(q)
 
         b1, b2 = st.columns(2)
 
