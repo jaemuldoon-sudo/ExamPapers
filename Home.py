@@ -41,10 +41,7 @@ def generate_exam_question(topic: str, marks: int):
         "- Do NOT use $...$ or $$...$$."
         "- Output RAW LaTeX only, suitable for st.latex()."
         "- Never output plain text maths like x^2 or 1/6."
-        "- Every mathematical expression must be written in pure LaTeX, e.g.:
-          2x^2 - 4x - 6 = 0
-          \frac{1}{6}
-          \sqrt{x}"
+        "- Every mathematical expression must be written in pure LaTeX, e.g.: 2x^2 - 4x - 6 = 0  \frac{1}{6}  \sqrt{x}"
         "- Return exactly 3 exam-style questions, each possibly multi-part."
         "- Do NOT include solutions."
 
