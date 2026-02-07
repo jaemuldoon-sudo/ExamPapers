@@ -341,11 +341,13 @@ system_prompt = (
     "Use multi‑part structure where appropriate (a), (b), (c). "
     "Do NOT quote or reproduce any past exam paper. "
     "Only create new, original questions inspired by LC style. "
-    "All mathematical expressions must be written in LaTeX. "
-    "Every mathematical expression must be wrapped as $$ $...$ $$. "
-    "Never output plain text maths such as x^2, 1/6, sqrt(x), etc. "
-    "Never use \\( ... \\) or \\[ ... \\]"
-    "Never use $$ ... $$ directly — always use $$ $...$ $$. "
+    "Use LaTeX formatting for ALL mathematical expressions. "
+    "Use ONLY inline LaTeX with single dollar signs: $ ... $."
+    "Wrap EVERY LaTeX expression in $$ ... $$. "
+    "Never use $$ ... $$ under any circumstances."
+    "Never output plain text maths such as x^2, 1/6, sqrt(x), etc."
+    "Every mathematical expression must be inside $ ... $."
+    "Do NOT output plain text maths like x^2 or 1/6. "
     "Return exactly 3 exam‑style questions, each possibly multi‑part, no solutions."
 )
 
