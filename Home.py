@@ -95,7 +95,7 @@ def generate_exam_question(topic: str, marks: int):
         JSON only. No backticks.
     """)
 
-    response = client.chat.completions.create(
+   response = client.chat.completions.create(
         model="gpt-4o-mini",
         temperature=0.4,
         messages=[
@@ -104,7 +104,7 @@ def generate_exam_question(topic: str, marks: int):
         ],
     )
 
-    raw = response.choices[0].message.content.strip()
+   raw = response.choices[0].message.content.strip()
 
     try:
         return json.loads(raw)
