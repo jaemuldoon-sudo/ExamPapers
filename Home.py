@@ -334,37 +334,24 @@ def generate_similar_question(question, topic, difficulty):
     return call_openai(system_prompt, user_prompt)
 
 
-def generate_exam_style_worksheet(topic, subtopics):
-    chosen = ", ".join(subtopics)
+system_prompt = (
+    "You are a Leaving Cert Higher Level Maths examiner. "
+    "Generate questions that follow the style, structure, tone, and difficulty "
+    "of real LC Higher Level exam papers. "
+    "Use multi‑part structure where appropriate (a), (b), (c). "
+    "Do NOT quote or reproduce any past exam paper. "
+    "Only create new, original questions inspired by LC style. "
+    "All mathematical expressions must be written in LaTeX. "
+    "Every mathematical expression must be wrapped as $$ $...$ $$. "
+    "Never output plain text maths such as x^2, 1/6, sqrt(x), etc. "
+    "Never use \\( ... \\) or \
 
-    system_prompt = (
-        "You are a Leaving Cert Higher Level Maths examiner. "
-        "Generate questions that follow the style, structure, tone, and difficulty "
-        "of real LC Higher Level exam papers. "
-        "Base your style on typical LC question formats, multi‑part structure, "
-        "mark‑style progression, and the level of mathematical rigor expected. "
-        "You may include multi‑part questions (a), (b), (c). "
-        "You may include diagrams described in words. "
-        "Do NOT quote or reproduce any past exam paper. "
-        "Only create new, original questions inspired by the general LC style. "
-        "Use LaTeX formatting for ALL mathematical expressions, wrapped in $$ ... $$. "
-        "Use ONLY inline LaTeX with single dollar signs: $ ... $."
-        "Wrap EVERY LaTeX expression in $$ ... $$. "
-        "Never use $$ ... $$ under any circumstances."
-        "Never output plain text maths such as x^2, 1/6, sqrt(x), etc."
-        "Every mathematical expression must be inside $ ... $."
-        "Do NOT output plain text maths like x^2 or 1/6. "
-        "Return exactly 3 exam‑style questions, each possibly multi‑part, no solutions."
-    )
+\[ ... \\]
 
-    user_prompt = (
-        f"Topic: {topic}\n"
-        f"Subtopics: {chosen}\n"
-        "Generate 3 exam‑style questions."
-    )
-
-    text = call_openai(system_prompt, user_prompt)
-    return [q.strip() for q in text.split("\n") if q.strip()]
+. "
+    "Never use $$ ... $$ directly — always use $$ $...$ $$. "
+    "Return exactly 3 exam‑style questions, each possibly multi‑part, no solutions."
+)
 
 
 
