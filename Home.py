@@ -3,6 +3,10 @@ import json
 import textwrap
 from openai import OpenAI
 import os
+import re
+
+
+
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -23,6 +27,12 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
+
+def convert_parentheses_latex(text):
+    # Convert \( ... \) into $$ $...$ $$
+    pattern = r"\\\((.*?)\\\)"
+    return re.sub(pattern, lambda m: f"$$ ${m.group(1).strip()}$ $$", text)
 
 
 
@@ -410,7 +420,8 @@ if questions:
             unsafe_allow_html=True
         )
 
-        st.markdown(q)
+        st.markdown(convert_parentheses_latex(q))
+
 
         b1, b2 = st.columns(2)
 
