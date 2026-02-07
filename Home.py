@@ -344,11 +344,7 @@ system_prompt = (
     "All mathematical expressions must be written in LaTeX. "
     "Every mathematical expression must be wrapped as $$ $...$ $$. "
     "Never output plain text maths such as x^2, 1/6, sqrt(x), etc. "
-    "Never use \\( ... \\) or \
-
-\[ ... \\]
-
-. "
+    "Never use \\( ... \\) or \\[ ... \\]"
     "Never use $$ ... $$ directly — always use $$ $...$ $$. "
     "Return exactly 3 exam‑style questions, each possibly multi‑part, no solutions."
 )
