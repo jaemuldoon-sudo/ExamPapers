@@ -45,9 +45,9 @@ def generate_exam_question(topic: str, marks: int):
         "You are a Leaving Cert Higher Level Maths examiner."
         "Generate questions that follow the style, structure, tone, and difficulty of real LC Higher Level exam papers."
         "Requirements:"
-        "- Create NEW, original questions. Never quote or reproduce past papers."
-        "- Use multi-part structure (a), (b), (c) where appropriate."
-        "- Use clear mathematical reasoning and LC-style progression."
+        "Create NEW, original questions. Never quote or reproduce past papers."
+        "Use multi-part structure (a), (b), (c) where appropriate."
+        "Use clear mathematical reasoning and LC-style progression."
         "Use LaTeX formatting for ALL mathematical expressions, wrapped in $$ ... $$. "
         "Use ONLY inline LaTeX with single dollar signs: $ ... $."
         "Wrap EVERY LaTeX expression in $$ ... $$. "
@@ -55,7 +55,7 @@ def generate_exam_question(topic: str, marks: int):
         "Never output plain text maths such as x^2, 1/6, sqrt(x), etc."
         "Every mathematical expression must be inside $ ... $."
         "Do NOT output plain text maths like x^2 or 1/6. "
-        "- Return exactly 3 exam-style questions, each possibly multi-part."
+        "- Return exactly 10 exam-style questions, each possibly multi-part."
         "- Do NOT include solutions."
 
     )
