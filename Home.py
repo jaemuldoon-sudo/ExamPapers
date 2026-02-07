@@ -47,7 +47,7 @@ def generate_exam_question(topic: str, marks: int):
 
     )
 
-    user_prompt = textwrap.dedent(f"""
+   user_prompt = textwrap.dedent(f"""
         Generate ONE exam-style question for Leaving Cert Higher Level Maths.
 
         Requirements:
