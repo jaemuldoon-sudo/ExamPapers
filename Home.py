@@ -374,34 +374,6 @@ def generate_exam_style_worksheet(topic, subtopics):
 # -----------------------------
 st.set_page_config(page_title="LC Maths Tutor", layout="centered")
 
-# -----------------------------
-# BRAND HEADER
-# -----------------------------
-st.markdown(
-    """
-    <div style="text-align:center; padding: 10px 0 20px 0;">
-        <h1 style="margin-bottom:0;">📘 LC Maths Tutor</h1>
-        <p style="color:#4a4a4a; font-size:18px; margin-top:5px;">
-            Adaptive, exam‑style practice — built for students.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# -----------------------------
-# TOPIC + SUBTOPICS
-# -----------------------------
-st.markdown("### Choose Your Topic")
-topic = st.selectbox("", TOPICS)
-
-st.markdown("### Choose Subtopics")
-subtopics = st.multiselect(
-    "",
-    SUBTOPICS.get(topic, []),
-    placeholder="Pick 1–5 subtopics"
-)
-
 st.markdown("---")
 
 # -----------------------------
@@ -415,51 +387,7 @@ if "similar_questions" not in st.session_state:
     st.session_state.similar_questions = {}
 
 
-# -----------------------------
-# WORKSHEET BUTTONS (MOBILE‑FIRST)
-# -----------------------------
-st.markdown("### Generate Worksheet")
 
-# Row 1 — Difficulty
-c1, c2, c3 = st.columns(3)
-
-with c1:
-    if st.button("Easy", use_container_width=True):
-        st.session_state.difficulty = "Easy"
-        st.session_state.questions = generate_worksheet(topic, subtopics, "Easy")
-
-with c2:
-    if st.button("Medium", use_container_width=True):
-        st.session_state.difficulty = "Medium"
-        st.session_state.questions = generate_worksheet(topic, subtopics, "Medium")
-
-with c3:
-    if st.button("Hard", use_container_width=True):
-        st.session_state.difficulty = "Hard"
-        st.session_state.questions = generate_worksheet(topic, subtopics, "Hard")
-
-# Row 2 — Random / Balanced / Exam Style
-c4, c5, c6 = st.columns(3)
-
-with c4:
-    if st.button("Random", use_container_width=True):
-        import random
-        diff = random.choice(["Easy", "Medium", "Hard"])
-        st.session_state.difficulty = diff
-        st.session_state.questions = generate_worksheet(topic, subtopics, diff)
-
-with c5:
-    if st.button("Balanced", use_container_width=True):
-        # st.session_state.difficulty = "Balanced"
-        st.session_state.questions = generate_balanced_worksheet(topic, subtopics)
-
-with c6:
-    if st.button("Exam Style", use_container_width=True):
-        st.session_state.difficulty = "Exam Style"
-        st.session_state.questions = generate_exam_style_worksheet(topic, subtopics)
-
-
-st.markdown("---")
 
 # -----------------------------
 # DISPLAY WORKSHEET
