@@ -421,7 +421,7 @@ if questions:
             unsafe_allow_html=True
         )
 
-        st.latex(q)
+        st.markdown(q)
 
         b1, b2 = st.columns(2)
 
