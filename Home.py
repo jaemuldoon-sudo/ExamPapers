@@ -265,7 +265,7 @@ if "similar_questions" not in st.session_state:
 # -----------------------------
 # WORKSHEET BUTTONS (MOBILE‑FIRST)
 # -----------------------------
-st.markdown("### Generate Worksheet")
+st.markdown("### Generate Exam Paper")
 
 # Row 1 — Difficulty
 c1, c2, c3 = st.columns(3)
