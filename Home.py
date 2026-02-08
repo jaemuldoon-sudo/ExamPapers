@@ -190,7 +190,7 @@ def generate_exam_style_worksheet(topic, subtopics):
     return [q.strip() for q in text.split("\n") if q.strip()]
 
 
-def generate_exaxPaper(topic, subtopics):
+def generate_examPaper(topic, subtopics):
     chosen = ", ".join(subtopics)
 
     system_prompt = (
