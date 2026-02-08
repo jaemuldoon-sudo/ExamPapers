@@ -204,11 +204,7 @@ def generate_examPaper(topic, subtopics):
         "- ALL mathematical expressions must be written in pure LaTeX with NO $ or $$ delimiters. "
         "- Never output plain‑text maths such as x^2, 1/6, sqrt(x). "
         "- Always use LaTeX forms such as x^2, \\frac{1}{6}, \\sqrt{x}. "
-        "- Never use LaTeX delimiters like \\( ... \\) or \
-
-\[ ... \\]
-
-. "
+        "- Never use LaTeX delimiters like \\( ... \\) or \\[ ... \\]. "
         "- Never copy, quote, or paraphrase any past exam paper. "
         "- Create only NEW, original questions. "
         "- Return EXACTLY 3 exam‑style questions. "
