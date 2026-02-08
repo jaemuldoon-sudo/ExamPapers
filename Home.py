@@ -20,7 +20,7 @@ SUBTOPICS = {
         "Normal Distribution"
     ],
     "Trigonometry": [
-        "Trig identities",
+        "TrigONMETRIC identities",
         "Trig equations",
         "Graphs",
         "Radians",
