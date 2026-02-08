@@ -354,7 +354,7 @@ difficulty = st.session_state.difficulty
 if questions:
     st.markdown(
         f"""
-        <h2 style="margin-bottom:0;">{topic} Worksheet</h2>
+        <h2 style="margin-bottom:0;">{topic} Workshiiiieet</h2>
         <p style="color:#6a6a6a; margin-top:0;">
             Mode: <strong>{difficulty}</strong>
         </p>
