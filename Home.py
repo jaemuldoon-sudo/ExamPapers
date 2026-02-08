@@ -204,7 +204,7 @@ def generate_examPaper(topic, subtopics):
         "- ALL mathematical expressions must be written in pure LaTeX with NO $ or $$ delimiters. "
         "- Never output plain‑text maths such as x^2, 1/6, sqrt(x). "
         "- Always use LaTeX forms such as x^2, \\frac{1}{6}, \\sqrt{x}. "
-        "- Never use \\( ... \\) or \
+        "- Never use LaTeX delimiters like \\( ... \\) or \
 
 \[ ... \\]
 
@@ -226,7 +226,6 @@ def generate_examPaper(topic, subtopics):
 
     text = call_openai(system_prompt, user_prompt)
 
-    # Split into individual questions
     questions = [q.strip() for q in text.split("\n\n") if q.strip()]
     return questions[:3]
 
