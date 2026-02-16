@@ -3,6 +3,11 @@ import os
 import json
 from anthropic import Anthropic
 
+
+st.write("API Key exists:", "ANTHROPIC_API_KEY" in os.environ)
+st.write("API Key value:", os.environ.get("ANTHROPIC_API_KEY", "NOT FOUND")[:20] + "...")
+
+
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 # -----------------------------
