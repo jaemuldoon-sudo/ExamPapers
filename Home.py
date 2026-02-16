@@ -1,9 +1,9 @@
 import streamlit as st
 import os
 import json
-from openai import OpenAI
+from anthropic import Anthropic
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 # -----------------------------
 # LOAD EXAM INDEX
@@ -106,17 +106,18 @@ def format_template_for_prompt(templates):
     return formatted
 
 # -----------------------------
-# OPENAI CALL
+# Claude CALL
 # -----------------------------
-def call_openai(system_prompt, user_prompt):
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
+def call_claude(system_prompt, user_prompt):
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",  # Claude Sonnet 4
+        max_tokens=4096,
+        system=system_prompt,  # System prompt is separate in Claude
         messages=[
-            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ]
     )
-    return response.choices[0].message.content
+    return response.content[0].text
 
 
 # -----------------------------
@@ -152,8 +153,8 @@ def generate_worksheet(topic, subtopics, difficulty):
         "Generate 10 NEW questions that match the LC exam style shown in the examples. "
         "Ensure ALL maths is in LaTeX wrapped in $ ... $."
     )
-
-    text = call_openai(system_prompt, user_prompt)
+call_
+    text = call_claude(system_prompt, user_prompt)
     return [q.strip() for q in text.split("\n") if q.strip()]
 
 
@@ -179,7 +180,7 @@ def generate_balanced_worksheet(topic, subtopics):
 
     user_prompt = f"Topic: {topic}\nSubtopics: {chosen}\n\nCreate NEW questions matching LC exam style."
 
-    text = call_openai(system_prompt, user_prompt)
+    text = call_claude(system_prompt, user_prompt)
     return [q.strip() for q in text.split("\n") if q.strip()]
 
 
@@ -197,7 +198,7 @@ def generate_answer(question, topic, difficulty):
 
     user_prompt = f"Topic: {topic}\nQuestion: {question}"
 
-    return call_openai(system_prompt, user_prompt)
+    return call_claude(system_prompt, user_prompt)
 
 
 def generate_similar_question(question, topic, difficulty):
@@ -220,7 +221,7 @@ def generate_similar_question(question, topic, difficulty):
 
     user_prompt = f"Topic: {topic}\nOriginal question: {question}\n\nCreate a NEW similar question."
 
-    return call_openai(system_prompt, user_prompt)
+    return call_claude(system_prompt, user_prompt)
 
 
 def generate_exam_style_worksheet(topic, subtopics):
@@ -255,7 +256,7 @@ def generate_exam_style_worksheet(topic, subtopics):
         "Generate 3 NEW exam‑style questions matching the LC format shown in examples."
     )
 
-    text = call_openai(system_prompt, user_prompt)
+    text = call_claude(system_prompt, user_prompt)
     return [q.strip() for q in text.split("\n") if q.strip()]
 
 
@@ -294,7 +295,7 @@ def generate_examPaper(topic, subtopics):
         "Return the questions separated by blank lines."
     )
 
-    text = call_openai(system_prompt, user_prompt)
+    text = call_claude(system_prompt, user_prompt)
 
     questions = [q.strip() for q in text.split("\n\n") if q.strip()]
     return questions[:3]
