@@ -153,7 +153,7 @@ def generate_worksheet(topic, subtopics, difficulty):
         "Generate 10 NEW questions that match the LC exam style shown in the examples. "
         "Ensure ALL maths is in LaTeX wrapped in $ ... $."
     )
-call_
+
     text = call_claude(system_prompt, user_prompt)
     return [q.strip() for q in text.split("\n") if q.strip()]
 
